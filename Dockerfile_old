@@ -1,0 +1,21 @@
+FROM tensorflow/tensorflow:latest
+
+RUN apt-get update -y && apt-get install zip graphviz -y
+
+RUN pip install --upgrade pip
+RUN pip install jupyter pandas sklearn matplotlib ipympl ortools \
+    RISE jupyter_contrib_nbextensions tables tensorflow_probability pydot tensorflow-lattice
+
+RUN jupyter contrib nbextension install --system
+
+# Copy raw data
+COPY ./data /app/data
+
+# During development, the notebooks folder will be overriden by a volume
+COPY ./notebooks /app/notebooks
+
+WORKDIR /app/notebooks
+CMD ["jupyter", "notebook", "--port=8888", "--no-browser", \
+     "--ip=0.0.0.0", "--allow-root"]
+
+
